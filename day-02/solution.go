@@ -6,27 +6,34 @@ import (
 	"os"
 )
 
-func decodeMove(letter string) int {
+func pointsForMove(letter string) int {
 	switch letter {
-		case "A", "X":
-			return 1 // Rock
-		case "B", "Y":
-			return 2 // Paper
-		default:
-			return 3 // Scissors
+	case "A":
+		return 1 // Rock
+	case "B":
+		return 2 // Paper
+	default:
+		return 3 // Scissors
 	}
 }
 
-func findWinner(playerMove int, opponentMove int) int {
-	if playerMove == opponentMove {
-		return 3
-	} else if opponentMove < playerMove && playerMove - opponentMove == 1 || playerMove == 1 && opponentMove == 3 {
-		return 6
+func calculatePlayerPoints(opponentMove int, code string) int {
+	if code == "Y" {
+		return 3 + opponentMove
+	} else if code == "X" {
+		if opponentMove == 1 {
+			return 3
+		} else {
+			return opponentMove - 1
+		}
+	} else {
+		if opponentMove == 3 {
+			return 7
+		} else {
+			return 7 + opponentMove
+		}
 	}
-	return 0
 }
-
-
 
 func main() {
 	totalPoints := 0
@@ -39,10 +46,10 @@ func main() {
 	for scanner.Scan() {
 		fileLine := scanner.Text()
 
-		playerMove := decodeMove(string(fileLine[2]))
-		opponentMove := decodeMove(string(fileLine[0]))
+		opponentMove := pointsForMove(string(fileLine[0]))
+		code := string(fileLine[2])
 
-		totalPoints += (findWinner(playerMove, opponentMove) + playerMove)
+		totalPoints += calculatePlayerPoints(opponentMove, code)
 	}
 
 	fmt.Println(totalPoints)
