@@ -14,6 +14,19 @@ func getItemPriority(letter rune) int {
     return int(letter) - 96
 }
 
+func lineContainsRune(letter rune, line []rune) bool {
+	containsRune := false
+
+	for _, item := range line {
+		if letter == item {
+			containsRune = true
+			break;
+		}
+ 	}
+
+	return containsRune
+}
+
 func main() {
 	readFile, _  := os.Open("data.txt")
 	defer readFile.Close()
@@ -21,31 +34,30 @@ func main() {
 	scanner.Split(bufio.ScanLines)
 
 	commonRucksackItems := make(map[rune]int)
+	var groups []string
+
 
 	for scanner.Scan() {
 		fileLine := string(scanner.Text())
-		firstRucksack := fileLine[:len(fileLine)/2]
-		secondRucksack := fileLine[len(fileLine)/2:]
-		
-		for _, itemFromFirstRucksack := range firstRucksack {
-			isCommonItemFound := false
+		groups = append(groups, fileLine)
+	}
 
-			for _, itemFromSecondRucksack := range secondRucksack {
+	for i := 0; i + 3 <= len(groups); i += 3 {
+		lineOneToRune := []rune(groups[i])
+		lineTwoToRune := []rune(groups[i + 1])
+		lineThreeToRune := []rune(groups[i + 2])
 
-				if itemFromFirstRucksack == itemFromSecondRucksack {
-					if _, ok := commonRucksackItems[itemFromFirstRucksack]; ok {
-						commonRucksackItems[itemFromFirstRucksack] += getItemPriority(itemFromFirstRucksack) 
-					} else {
-						commonRucksackItems[itemFromFirstRucksack] = getItemPriority(itemFromFirstRucksack) 
-					}
-					
-					isCommonItemFound = true
-					break;
+		for index := 0; index < len(lineOneToRune); index++ {
+			isElementInSecondLine := lineContainsRune(lineOneToRune[index], lineTwoToRune)
+			isElementInThirdLine := lineContainsRune(lineOneToRune[index], lineThreeToRune)
+
+			if isElementInSecondLine && isElementInThirdLine {
+				if _, ok := commonRucksackItems[lineOneToRune[index]]; ok {
+					commonRucksackItems[lineOneToRune[index]] += getItemPriority(lineOneToRune[index])
+				} else {
+					commonRucksackItems[lineOneToRune[index]] = getItemPriority(lineOneToRune[index])
 				}
-			}
-
-			if isCommonItemFound {
-				break;
+				break
 			}
 		}
 	}
