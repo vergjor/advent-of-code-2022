@@ -14,7 +14,12 @@ func toInt(value string) int {
 }
 
 func isInRange(firstRange []string, secondRange []string) bool {
-	return toInt(firstRange[0]) >= toInt(secondRange[0]) && toInt(firstRange[1]) <= toInt(secondRange[1])
+	for number := toInt(firstRange[0]); number <= toInt(firstRange[1]); number++ {
+		if number >= toInt(secondRange[0]) && number <= toInt(secondRange[1]) {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
@@ -36,7 +41,7 @@ func main() {
 		firstElfSection := strings.Split(sectionElves[0], "-")
 		secondElfSection := strings.Split(sectionElves[1], "-")
 
-		if isInRange(firstElfSection, secondElfSection) || isInRange(secondElfSection, firstElfSection) {
+		if isInRange(firstElfSection, secondElfSection) {
 			totalOverlappingSections++
 		}
 	}
